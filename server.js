@@ -1,22 +1,17 @@
-/*********************************************************************************
- * BTI325 – Assignment 3
- * I declare that this assignment is my own work in accordance with Seneca Academic Policy.
- * No part of this assignment has been copied manually or electronically from any other source
- * (including web sites) or distributed to other students.
+/************************************************************************* *
+ * BTI325– Assignment 3 *
+ * I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part of this assignment has been copied manually or electronically from any other source. *  (including 3rd party web sites) or distributed to other students. *
+ *  *  Name: yunseok Choi  Student ID:  148765175  Date:  Oct 29th
+ * Your app’s URL (from Cyclic Heroku)
+ * that I can click to see your application:  *
  *
- *
- * Online (Cyclic) URL:
- * ___
- *
- *****************************************************************************/
-
+ *  * *************************************************************************/
 const express = require('express');
 const app = express();
 const HTTP_PORT = process.env.PORT || 5500;
 const data = require('./data-service');
 const path = require('path');
 const multer = require('multer');
-const path = require('path');
 const fs = require('fs');
 
 const storage = multer.diskStorage({
@@ -29,7 +24,6 @@ const upload = multer({ storage: storage });
 
 app.use(express.static('./public/'));
 app.use(express.static('./views/'));
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
