@@ -45,7 +45,7 @@ module.exports.addEmployee = function (employeeData) {
   employeeData.employeeNum = employees.length + 1;
   employees.push(employeeData);
   return new Promise(function (resolve, reject) {
-   function addEmp() {
+    function addEmp() {
       console.log('Get New Employee');
     }
     resolve();
