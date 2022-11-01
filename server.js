@@ -46,8 +46,6 @@ app.get('/employees/add', (req, res) => {
   res.sendFile(path.join(__dirname, '/views/addEmployee.html'));
 });
 
-app.get('/images/add', (req, res) => {});
-
 app.get('/managers', (req, res) => {
   data
     .getManagers()
