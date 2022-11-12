@@ -1,20 +1,28 @@
 const fs = require('fs');
 
-const employees = [];
-const departments = [];
+let employees = [];
+let departments = [];
 
-function read(name) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(`./data/${name}.json`, (error, data) => {
-      if (error !== null) reject(`Failure to read file ${name}.json!`);
-      else if (name === 'employees') resolve(employees.push(JSON.parse(data)));
-      else if (name === 'departments') resolve(departments.push(JSON.parse(data)));
+exports.initialize = function () {
+  return new Promise(function (resolve, reject) {
+    fs.readFile('./data/employees.json', (err, data) => {
+      if (err) {
+        reject('Failure to read file employees.json!');
+      } else {
+        employees = JSON.parse(data);
+        resolve(employees);
+      }
+    });
+
+    fs.readFile('./data/departments.json', (err, data) => {
+      if (err) {
+        reject('Failure to read file departments.json!');
+      } else {
+        departments = JSON.parse(data);
+        resolve(departments);
+      }
     });
   });
-}
-
-module.exports.initialize = function () {
-  return read('employees').then(read('departments'));
 };
 
 module.exports.getAllEmployees = function () {
@@ -93,15 +101,30 @@ module.exports.getEmployeesByManager = function (manager) {
     }
   });
 };
-module.exports.getEmployeeByNum = function (num) {
+exports.getEmployeeByNum = function (num) {
   return new Promise(function (resolve, reject) {
-    function getEmpByNum() {
-      console.log('Get Employees By Num');
-      for (nm of employees) {
-        if (nm.employeeNum == num) {
-          resolve(nm);
+    if (employees.length > 0) {
+      for (let i in employees) {
+        if (employees[i].employeeNum == num) {
+          resolve(employees[i]);
         }
       }
+    } else {
+      reject('no results returned');
     }
+  });
+};
+
+exports.updateEmployee = function (employeeData) {
+  return new Promise((resolve, reject) => {
+    employeeData.isManager = employeeData.isManager ? true : false;
+    return new Promise((resolve, reject) => {
+      employees.forEach((employee) => {
+        if (employee.employeeNum == employeeData.employeeNum) {
+          employees.splice(employeeData.employeeNum - 1, 1, employeeData);
+        }
+      });
+      resolve();
+    });
   });
 };
