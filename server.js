@@ -20,7 +20,6 @@ app.engine(
   '.hbs',
   engine({
     extname: '.hbs',
-
     helpers: {
       navLink: function (url, options) {
         return (
@@ -33,7 +32,6 @@ app.engine(
           '</a></li>'
         );
       },
-
       equal: function (lvalue, rvalue, options) {
         if (arguments.length < 3)
           throw new Error('Handlebars Helper equal needs 2 parameters');
@@ -72,18 +70,14 @@ app.get('/about', (req, res) => {
   res.render('about', { layout: 'main' });
 });
 
+/********************** . Employees ************************** */
 app.get('/employees/add', (req, res) => {
-  res.render('addEmployee');
-});
-
-app.get('/images/add', (req, res) => {
-  res.render('addImage');
-});
-
-app.get('/images', (req, res) => {
-  fs.readdir('./public/images/uploaded', (err, items) => {
-    res.render('image', { data: items });
-  });
+  data
+    .getDepartments()
+    .then(function (data) {
+      res.render('addEmployee', { departments: data });
+    })
+    .catch(() => res.render('addEmployee', { departments: [] }));
 });
 
 app.get('/employees', (req, res) => {
@@ -163,7 +157,15 @@ app.get('/employee/:empNum', (req, res) => {
       }
     });
 });
-
+app.get('/employees/delete/:empNum', (req, res) => {
+  data
+    .deleteEmployeeByNum(req.params.empNum)
+    .then(() => res.redirect('/employees'))
+    .catch(() =>
+      res.status(500).send('Unable to Remove Employee / Employee not found')
+    );
+});
+/*************************** Department ************************ */
 app.get('/departments', (req, res) => {
   data
     .getDepartments()
@@ -175,15 +177,6 @@ app.get('/departments', (req, res) => {
     .catch((err) => {
       res.render({ message: 'no results' });
     });
-});
-
-app.get('/employees/delete/:empNum', (req, res) => {
-  data
-    .deleteEmployeeByNum(req.params.empNum)
-    .then(() => res.redirect('/employees'))
-    .catch(() =>
-      res.status(500).send('Unable to Remove Employee / Employee not found')
-    );
 });
 
 app.get('/departments/add', (req, res) => {
@@ -203,14 +196,27 @@ app.get('/department/:departmentId', (req, res) => {
       res.status(404).send('Department Not Found');
     });
 });
+/******************************* . Image  *************************** */
+app.get('/images/add', (req, res) => {
+  res.render('addImage');
+});
 
-// app post
+app.get('/images', (req, res) => {
+  fs.readdir('./public/images/uploaded', (err, items) => {
+    res.render('image', { data: items });
+  });
+});
+
+/************************** app post *****************************  */
 app.post('/images/add', upload.single('imageFile'), (req, res) => {
   res.render('addImage', { layout: 'main' });
 });
 
 app.post('/employees/add', (req, res) => {
-  res.render('addEmployee', { layout: 'main' });
+  data
+    .addEmployee(req.body)
+    .then(() => res.redirect('/employees'))
+    .catch((err) => res.json({ message: err }));
 });
 
 app.post('/employee/update', (req, res) => {

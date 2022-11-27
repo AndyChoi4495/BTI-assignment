@@ -97,7 +97,7 @@ exports.getManagers = function () {
 exports.addEmployee = function (employeeData) {
   return new Promise(function (resolve, reject) {
     employeeData.isManager = employeeData.isManager ? true : false;
-    for (var i in employeeData) {
+    for (let i in employeeData) {
       if (employeeData[i] === '') {
         employeeData[i] = null;
       }
