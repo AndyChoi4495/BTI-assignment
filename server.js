@@ -86,17 +86,6 @@ app.get('/images', (req, res) => {
   });
 });
 
-app.get('/employee/:value', (req, res) => {
-  data
-    .getEmployeeByNum(req.params.value)
-    .then((data) => {
-      res.render('employee', { employee: data });
-    })
-    .catch((err) => {
-      res.render('employee', { message: 'no results' });
-    });
-});
-
 app.get('/employees', (req, res) => {
   if (req.query.status) {
     data
@@ -139,6 +128,40 @@ app.get('/employees', (req, res) => {
         res.render({ message: 'no results' });
       });
   }
+});
+app.get('/employee/:empNum', (req, res) => {
+  let viewData = {};
+  data
+    .getEmployeeByNum(req.params.empNum)
+    .then((data) => {
+      if (data) {
+        viewData.employee = data;
+      } else {
+        viewData.employee = null;
+      }
+    })
+    .catch(() => {
+      viewData.employee = null;
+    })
+    .then(data.getDepartments)
+    .then((data) => {
+      viewData.departments = data;
+      for (let i = 0; i < viewData.departments.length; i++) {
+        if (viewData.departments[i].departmentId == viewData.employee.department) {
+          viewData.departments[i].selected = true;
+        }
+      }
+    })
+    .catch(() => {
+      viewData.departments = [];
+    })
+    .then(() => {
+      if (viewData.employee == null) {
+        res.status(404).send('Employee Not Found');
+      } else {
+        res.render('employee', { viewData: viewData });
+      }
+    });
 });
 
 app.get('/departments', (req, res) => {
