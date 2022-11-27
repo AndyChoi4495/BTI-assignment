@@ -1,27 +1,26 @@
-<div class='row'>
+<div class='row' style='background-color:rgb(255, 255, 255);color:black;'>
   <div class='col-md-12'>
-    <h2>Departments</h2>
+    <h2>Departments
+      <a href='/departments/add' class='btn btn-success pull-right'>Add New Department</a>
+    </h2>
     <hr />
-    <p>
-      <table class='table'>
-        <thead>
+    <table class='table'>
+      <thead>
+        <tr>
+          <th>Department Number</th>
+          <th>Department Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each departments}}
           <tr>
-            <th>Department Number</th>
-            <th>Department Name</th>
+            <td><a
+                href='/employees?department={{departmentId}}'
+              >{{departmentId}}</a></td>
+            <td><a href='/department/{{departmentId}}'>{{departmentName}}</a></td>
           </tr>
-        </thead>
-        <tbody>{{#each departments}}
-            <tr>
-              <td><a
-                  href='/employees?department={{departmentId}}'
-                >{{departmentId}}</a></td>
-              <td><a
-                  href='/employees?department={{departmentId}}'
-                >{{departmentName}}</a></td>
-            </tr>
-          {{/each}}
-        </tbody>
-      </table>
-    </p>
+        {{/each}}
+      </tbody>
+    </table>
   </div>
 </div>
