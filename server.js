@@ -129,16 +129,16 @@ app.get('/employees', (req, res) => {
       .catch((err) => {
         res.render({ message: 'no results' });
       });
+  } else {
+    data
+      .getAllEmployees()
+      .then((data) => {
+        res.render('employees', { employee: data, layout: 'main' });
+      })
+      .catch((err) => {
+        res.render({ message: 'no results' });
+      });
   }
-
-  data
-    .getAllEmployees()
-    .then((data) => {
-      res.render('employees', { employee: data, layout: 'main' });
-    })
-    .catch((err) => {
-      res.render({ message: 'no results' });
-    });
 });
 
 app.get('/departments', (req, res) => {
@@ -154,7 +154,7 @@ app.get('/departments', (req, res) => {
     });
 });
 
-app.get('/employees/delete/:value', (req, res) => {
+app.get('/employees/delete/:empNum', (req, res) => {
   data
     .deleteEmployeeByNum(req.params.empNum)
     .then(() => res.redirect('/employees'))
