@@ -1,7 +1,7 @@
 /************************************************************************* *
- * BTI325– Assignment 4 *
+ * BTI325– Assignment 5 *
  * I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part of this assignment has been copied manually or electronically from any other source. *  (including 3rd party web sites) or distributed to other students. *
- *  *  Name: yunseok Choi  Student ID:  148765175  Date:  Nov 10th
+ *  *  Name: yunseok Choi  Student ID:  148765175  Date:  Nov 22nd
  * Your app’s URL (from Cyclic Heroku)
  * that I can click to see your application:  *
  * https://obscure-temple-19450.herokuapp.com/
@@ -154,6 +154,33 @@ app.get('/departments', (req, res) => {
     });
 });
 
+app.get('/employees/delete/:value', (req, res) => {
+  data
+    .deleteEmployeeByNum(req.params.empNum)
+    .then(() => res.redirect('/employees'))
+    .catch(() =>
+      res.status(500).send('Unable to Remove Employee / Employee not found')
+    );
+});
+
+app.get('/departments/add', (req, res) => {
+  res.render('addDepartment');
+});
+
+app.get('/department/:departmentId', (req, res) => {
+  data
+    .getDepartmentById(req.params.departmentId)
+    .then((data) => {
+      if (data.length > 0) res.render('department', { department: data });
+      else {
+        res.status(404).send('Department Not Found');
+      }
+    })
+    .catch(() => {
+      res.status(404).send('Department Not Found');
+    });
+});
+
 // app post
 app.post('/images/add', upload.single('imageFile'), (req, res) => {
   res.render('addImage', { layout: 'main' });
@@ -167,6 +194,20 @@ app.post('/employee/update', (req, res) => {
   data.updateEmployee(req.body).then((data) => {
     res.redirect('/employees/');
   });
+});
+
+app.post('/departments/add', (req, res) => {
+  data
+    .addDepartment(req.body)
+    .then(() => res.redirect('/departments'))
+    .catch((err) => res.json({ message: err }));
+});
+
+app.post('/departments/update', (req, res) => {
+  data
+    .updateDepartment(req.body)
+    .then(res.redirect('/departments'))
+    .catch((err) => res.json({ message: err }));
 });
 
 app.get('*', (req, res) => {
