@@ -306,8 +306,8 @@ app.get('*', (req, res) => {
   res.status(404).send('Page Not Found');
 });
 
-dataAuth.initialize().then(() => {
-  data
+data.initialize().then(() => {
+  dataAuth
     .initialize()
     .then(() => {
       app.listen(HTTP_PORT, () =>
