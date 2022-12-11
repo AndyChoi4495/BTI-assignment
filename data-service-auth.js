@@ -67,7 +67,7 @@ exports.checkUser = function (userData) {
     User.findOne({ userName: userData.userName })
       .exec()
       .then((result) => {
-        if (!userName) {
+        if ((userName = '')) {
           reject('Unable to find user: ' + userData.userName);
         } else {
           bcrypt.compare(userData.password, result.password).then((res) => {
