@@ -316,5 +316,5 @@ data
     );
   })
   .catch((e) => {
-    console.log(e);
+    console.log('unable to start server' + e);
   });

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 let Schema = mongoose.Schema;
 
-let Employees = new Schema({
+let User = new Schema({
   userName: { type: String, unique: true },
   password: String,
   email: String,
@@ -20,7 +20,7 @@ module.exports.initialize = () => {
       `mongodb+srv://andy:LKPc2TPaTvtgzLeD@senecaweb.zqaos2u.mongodb.net/web325_A6`
     );
     database.once('open', () => {
-      User = database.model('users', Employees);
+      User = database.model('users', User);
       resolve();
     });
     database.on('error', (err) => {
