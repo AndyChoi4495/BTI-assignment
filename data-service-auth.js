@@ -62,39 +62,40 @@ module.exports.registerUser = (userData) => {
   });
 };
 
-module.exports.checkUser = (userData) => {
+exports.checkUser = function (userData) {
   return new Promise((resolve, reject) => {
     User.findOne({ userName: userData.userName })
       .exec()
-      .then((res) => {
-        if (res) {
-          bcrypt.compare(userData.password, res.password).then((check) => {
-            if (check) {
-              res.loginHistory.push({
+      .then((result) => {
+        if (!userName) {
+          reject('Unable to find user: ' + userData.userName);
+        } else {
+          bcrypt.compare(userData.password, result.password).then((res) => {
+            if (res) {
+              result.loginHistory.push({
                 dateTime: new Date().toString(),
                 userAgent: userData.userAgent,
               });
-            } else {
-              reject('Incorrect password for user: ' + userData.userName);
-
-              User.updateOne(
-                { userName: res.userName },
-                { $set: { loginHistory: res.loginHistory } }
-              )
+              result
+                .update(
+                  { userName: result.userName },
+                  { $set: { loginHistory: result.loginHistory } }
+                )
                 .exec()
-                .then((updated) => {
-                  if (updated) {
-                    resolve(res);
-                  }
+                .then(() => {
+                  resolve(result);
                 })
                 .catch((err) => {
-                  reject(err);
+                  reject('There was an error verifying the user: ' + err);
                 });
+            } else {
+              reject('Incorrect Password for user: ' + userData.userName);
             }
           });
-        } else {
-          reject('Unable to find user: ' + userData.userName);
         }
+      })
+      .catch(() => {
+        reject('Unable to find user: ' + userData.userName);
       });
   });
 };
