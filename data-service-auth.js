@@ -1,6 +1,6 @@
-let Schema = mongoose.Schema;
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+let Schema = mongoose.Schema;
 
 let Employees = new Schema({
   userName: { type: String, unique: true },
