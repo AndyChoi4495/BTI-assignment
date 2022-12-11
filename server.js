@@ -261,6 +261,46 @@ app.post('/departments/update', (req, res) => {
     .then(res.redirect('/departments'))
     .catch((err) => res.json({ message: err }));
 });
+/* ****************** Login Register *************************** */
+app.get('/login', function (req, res) {
+  res.render('login');
+});
+app.get('/register', function (req, res) {
+  res.render('register');
+});
+app.post('/register', function (req, res) {
+  dataserviceAuth
+    .registerUser(req.body)
+    .then(function () {
+      res.render('register', { successMessage: 'User created' });
+    })
+    .catch(function (err) {
+      res.render('register', { errorMessage: err, userName: req.body.userName });
+    });
+});
+app.post('/login', function (req, res) {
+  req.body.userAgent = req.get('User-Agent');
+  dataserviceAuth
+    .checkUser(req.body)
+    .then(function (userData) {
+      req.session.user = {
+        userName: userData.userName,
+        email: userData.email,
+        loginHistory: userData.loginHistory,
+      };
+      res.redirect('/employees');
+    })
+    .catch(function (err) {
+      res.render('login', { errorMessage: err, userName: req.body.userName });
+    });
+});
+app.get('/logout', (req, res) => {
+  req.session.reset();
+  res.redirect('/login');
+});
+app.get('/userHistory', ensureLogin, function (req, res) {
+  res.render('userHistory');
+});
 
 app.get('*', (req, res) => {
   res.status(404).send('Page Not Found');
