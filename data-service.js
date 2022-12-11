@@ -1,11 +1,11 @@
 const Sequelize = require('sequelize');
 
 var sequelize = new Sequelize(
-  'azdbjvzm',
-  'azdbjvzm',
-  'CZd03iPqLLR9a8OyB8p9iSEvp3UkOHOX',
+  'gckuvzeq',
+  'gckuvzeq',
+  '7GHiuOqJGglBBx5hVafTJ096r6uqRxNS',
   {
-    host: 'ziggy.db.elephantsql.com',
+    host: 'castor.db.elephantsql.com',
     dialect: 'postgres',
     port: 5432,
     dialectOptions: {
