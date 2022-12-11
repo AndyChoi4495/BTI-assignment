@@ -13,7 +13,7 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 const { engine } = require('express-handlebars');
-const dataAuth = require('./data-service-auth');
+const dataServiceAuth = require('./data-service-auth');
 const clientSessions = require('client-sessions');
 
 app.use(
@@ -269,7 +269,7 @@ app.get('/register', function (req, res) {
   res.render('register');
 });
 app.post('/register', function (req, res) {
-  dataAuth
+  dataServiceAuth
     .registerUser(req.body)
     .then(function () {
       res.render('register', { successMessage: 'User created' });
@@ -280,7 +280,7 @@ app.post('/register', function (req, res) {
 });
 app.post('/login', (req, res) => {
   req.body.userAgent = req.get('User-Agent');
-  dataAuth
+  dataServiceAuth
     .checkUser(req.body)
     .then((user) => {
       console.log(user);
@@ -297,7 +297,7 @@ app.post('/login', (req, res) => {
 });
 app.get('/logout', (req, res) => {
   req.session.reset();
-  res.redirect('/login');
+  res.redirect('/');
 });
 app.get('/userHistory', ensureLogin, function (req, res) {
   res.render('userHistory');
@@ -307,13 +307,14 @@ app.get('*', (req, res) => {
   res.status(404).send('Page Not Found');
 });
 
-data.initialize().then(() => {
-  dataAuth
-    .initialize()
-    .then(() => {
-      app.listen(HTTP_PORT, () =>
-        console.log(`Express http server listening on ${HTTP_PORT}`)
-      );
-    })
-    .catch((e) => console.log(e));
-});
+data
+  .initialize()
+  .then(dataServiceAuth.initialize())
+  .then(() => {
+    app.listen(HTTP_PORT, () =>
+      console.log(`Express http server listening on ${HTTP_PORT}`)
+    );
+  })
+  .catch((e) => {
+    console.log(e);
+  });
