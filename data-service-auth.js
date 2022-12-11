@@ -14,8 +14,6 @@ let Employees = new Schema({
   ],
 });
 
-//let User = mongoose.model('users', Employees);
-
 module.exports.initialize = () => {
   return new Promise((resolve, reject) => {
     let database = mongoose.createConnection(
