@@ -13,7 +13,7 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 const { engine } = require('express-handlebars');
-const dataAuth = require('data-service-auth');
+const dataAuth = require('./data-service-auth');
 const clientSessions = require('client-sessions');
 
 app.use(
@@ -94,7 +94,7 @@ app.get('/about', (req, res) => {
 });
 
 /********************** . Employees ************************** */
-app.get('/employees/add', (req, res) => {
+app.get('/employees/add', ensureLogin, (req, res) => {
   data
     .getDepartments()
     .then(function (data) {
@@ -248,14 +248,14 @@ app.post('/employee/update', ensureLogin, (req, res) => {
   });
 });
 
-app.post('/departments/add', (req, res) => {
+app.post('/departments/add', ensureLogin, (req, res) => {
   data
     .addDepartment(req.body)
     .then(() => res.redirect('/departments'))
     .catch((err) => res.json({ message: err }));
 });
 
-app.post('/departments/update', (req, res) => {
+app.post('/departments/update', ensureLogin, (req, res) => {
   data
     .updateDepartment(req.body)
     .then(res.redirect('/departments'))
