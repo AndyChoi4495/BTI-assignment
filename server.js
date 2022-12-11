@@ -1,5 +1,5 @@
 /************************************************************************* *
- * BTI325– Assignment 5 *
+ * BTI325– Assignment 6 *
  * I declare that this assignment is my own work in accordance with Seneca  Academic Policy.  No part of this assignment has been copied manually or electronically from any other source. *  (including 3rd party web sites) or distributed to other students. *
  *  *  Name: yunseok Choi  Student ID:  148765175  Date:  Nov 27th
  * Your app’s URL (from Cyclic Heroku)
@@ -14,6 +14,30 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 const { engine } = require('express-handlebars');
+const auth = require('./data-service-auth');
+const clientSessions = require('client-sessions');
+
+server.use(
+  clientSessions({
+    cookieName: 'session',
+    secret: 'fasfsdgjdfkl$$&#$*&@',
+    duration: 2 * 60 * 1000,
+    activeDuration: 3 * 60 * 1000,
+  })
+);
+
+function ensureLogin(req, res, next) {
+  if (!req.session.user) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+}
+
+server.use(function (req, res, next) {
+  res.locals.session = req.session;
+  next();
+});
 
 // handle bar engine
 app.engine(
@@ -243,11 +267,13 @@ app.get('*', (req, res) => {
   res.status(404).send('Page Not Found');
 });
 
-data
-  .initialize()
-  .then(() => {
-    app.listen(HTTP_PORT, () =>
-      console.log(`Express http server listening on ${HTTP_PORT}`)
-    );
-  })
-  .catch((e) => console.log(e));
+auth.initialize().then(() => {
+  data
+    .initialize()
+    .then(() => {
+      app.listen(HTTP_PORT, () =>
+        console.log(`Express http server listening on ${HTTP_PORT}`)
+      );
+    })
+    .catch((e) => console.log(e));
+});
