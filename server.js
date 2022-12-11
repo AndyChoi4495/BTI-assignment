@@ -17,7 +17,7 @@ const { engine } = require('express-handlebars');
 const auth = require('./data-service-auth');
 const clientSessions = require('client-sessions');
 
-server.use(
+app.use(
   clientSessions({
     cookieName: 'session',
     secret: 'fasfsdgjdfkl$$&#$*&@',
@@ -34,7 +34,7 @@ function ensureLogin(req, res, next) {
   }
 }
 
-server.use(function (req, res, next) {
+app.use(function (req, res, next) {
   res.locals.session = req.session;
   next();
 });
@@ -104,7 +104,7 @@ app.get('/employees/add', (req, res) => {
     .catch(() => res.render('addEmployee', { departments: [] }));
 });
 
-app.get('/employees', (req, res) => {
+app.get('/employees', ensureLogin, (req, res) => {
   if (req.query.status) {
     data
       .getEmployeesByStatus(req.query.status)
@@ -147,7 +147,7 @@ app.get('/employees', (req, res) => {
       });
   }
 });
-app.get('/employee/:empNum', (req, res) => {
+app.get('/employee/:empNum', ensureLogin, (req, res) => {
   let viewData = {};
   data
     .getEmployeeByNum(req.params.empNum)
@@ -181,7 +181,7 @@ app.get('/employee/:empNum', (req, res) => {
       }
     });
 });
-app.get('/employees/delete/:empNum', (req, res) => {
+app.get('/employees/delete/:empNum', ensureLogin, (req, res) => {
   data
     .deleteEmployeeByNum(req.params.empNum)
     .then(() => res.redirect('/employees'))
@@ -190,7 +190,7 @@ app.get('/employees/delete/:empNum', (req, res) => {
     );
 });
 /*************************** Department ************************ */
-app.get('/departments', (req, res) => {
+app.get('/departments', ensureLogin, (req, res) => {
   data
     .getDepartments()
     .then((data) => {
@@ -203,11 +203,11 @@ app.get('/departments', (req, res) => {
     });
 });
 
-app.get('/departments/add', (req, res) => {
+app.get('/departments/add', ensureLogin, (req, res) => {
   res.render('addDepartment');
 });
 
-app.get('/department/:departmentId', (req, res) => {
+app.get('/department/:departmentId', ensureLogin, (req, res) => {
   data
     .getDepartmentById(req.params.departmentId)
     .then((data) => {
@@ -236,14 +236,14 @@ app.post('/images/add', upload.single('imageFile'), (req, res) => {
   res.render('addImage', { layout: 'main' });
 });
 
-app.post('/employees/add', (req, res) => {
+app.post('/employees/add', ensureLogin, (req, res) => {
   data
     .addEmployee(req.body)
     .then(() => res.redirect('/employees'))
     .catch((err) => res.json({ message: err }));
 });
 
-app.post('/employee/update', (req, res) => {
+app.post('/employee/update', ensureLogin, (req, res) => {
   data.updateEmployee(req.body).then((data) => {
     res.redirect('/employees/');
   });
