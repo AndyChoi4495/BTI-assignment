@@ -278,19 +278,20 @@ app.post('/register', function (req, res) {
       res.render('register', { errorMessage: err, userName: req.body.userName });
     });
 });
-app.post('/login', function (req, res) {
+app.post('/login', (req, res) => {
   req.body.userAgent = req.get('User-Agent');
   dataAuth
     .checkUser(req.body)
-    .then(function (userData) {
+    .then((user) => {
+      console.log(user);
       req.session.user = {
-        userName: userData.userName,
-        email: userData.email,
-        loginHistory: userData.loginHistory,
+        userName: user.userName,
+        email: user.email,
+        loginHistory: user.loginHistory,
       };
       res.redirect('/employees');
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.render('login', { errorMessage: err, userName: req.body.userName });
     });
 });
