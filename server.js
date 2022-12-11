@@ -13,7 +13,7 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 const { engine } = require('express-handlebars');
-const auth = require('./data-service-auth');
+const dataAuth = require('./data-service-auth');
 const clientSessions = require('client-sessions');
 
 app.use(
@@ -269,7 +269,7 @@ app.get('/register', function (req, res) {
   res.render('register');
 });
 app.post('/register', function (req, res) {
-  dataserviceAuth
+  dataAuth
     .registerUser(req.body)
     .then(function () {
       res.render('register', { successMessage: 'User created' });
@@ -280,7 +280,7 @@ app.post('/register', function (req, res) {
 });
 app.post('/login', function (req, res) {
   req.body.userAgent = req.get('User-Agent');
-  dataserviceAuth
+  dataAuth
     .checkUser(req.body)
     .then(function (userData) {
       req.session.user = {
@@ -306,7 +306,7 @@ app.get('*', (req, res) => {
   res.status(404).send('Page Not Found');
 });
 
-auth.initialize().then(() => {
+dataAuth.initialize().then(() => {
   data
     .initialize()
     .then(() => {
