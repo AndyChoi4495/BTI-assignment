@@ -13,7 +13,7 @@ const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
 const { engine } = require('express-handlebars');
-const dataAuth = require('./data-service-auth');
+const dataAuth = require('data-service-auth');
 const clientSessions = require('client-sessions');
 
 app.use(
